@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ReconIQ — Product Tour</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Outfit:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#06060A;--ink2:#0D0D14;--srf:#111118;--pnl:#16161E;--crd:#1C1C26;
+  --b1:#252530;--b2:#303040;--wh:#F0F0F8;--w2:#9090A8;--w3:#525260;
+  --lime:#B8FF4A;--lime2:#CEFF7A;--red:#FF4A4A;--amber:#FFB84A;--teal:#4AFFCC;--green:#4AFF90;
+}
+html,body{width:100%;height:100%;background:var(--ink);color:var(--wh);font-family:'Outfit',sans-serif;font-weight:400;overflow:hidden;-webkit-font-smoothing:antialiased}
+#progress-wrap{position:fixed;top:0;left:0;right:0;height:2px;z-index:999;background:var(--b1)}
+#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--lime),var(--teal));transition:width .08s linear}
+#nav{position:fixed;top:0;left:0;right:0;height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:rgba(6,6,10,.94);backdrop-filter:blur(16px);border-bottom:1px solid var(--b1);z-index:100}
+.nav-brand{font-family:'Playfair Display',serif;font-weight:600;font-size:17px;letter-spacing:.02em;display:flex;align-items:center;gap:10px}
+.nav-brand em{color:var(--lime);font-style:italic}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 10px var(--lime);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.65)}}
+.nav-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--w3);letter-spacing:.18em;font-weight:300}
+.nav-right{display:flex;align-items:center;gap:16px}
+.slide-counter{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--w3);letter-spacing:.1em}
+.nav-cta{background:var(--lime);color:#000;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;letter-spacing:.1em;padding:7px 18px;text-decoration:none;display:inline-block;transition:background .15s,transform .1s}
+.nav-cta:hover{background:var(--lime2);transform:translateY(-1px)}
+#controls{position:fixed;bottom:0;left:0;right:0;height:60px;display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(6,6,10,.94);backdrop-filter:blur(16px);border-top:1px solid var(--b1);z-index:100}
+.ctrl-btn{background:var(--crd);border:1px solid var(--b2);color:var(--w2);cursor:pointer;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.1em;padding:7px 16px;transition:all .15s}
+.ctrl-btn:hover{background:var(--pnl);color:var(--wh)}
+.ctrl-btn.pause-btn{color:var(--lime);border-color:rgba(184,255,74,.28)}
+.ctrl-btn.pause-btn:hover{background:rgba(184,255,74,.07)}
+.pip-wrap{display:flex;gap:6px;align-items:center;margin:0 6px}
+.pip{width:26px;height:3px;background:var(--b2);cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.pip.done{background:var(--w3)}
+.pip-fill{position:absolute;inset:0;background:var(--lime);transform:scaleX(0);transform-origin:left}
+.pip.active .pip-fill{transition:transform linear}
+.pip:hover{transform:scaleY(1.8)}
+.slide{position:fixed;inset:0;padding:52px 0 60px;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .45s ease}
+.slide.active{opacity:1;pointer-events:auto}
+.bg-grid{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(184,255,74,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(184,255,74,.025) 1px,transparent 1px);background-size:56px 56px}
+.scan-line{position:fixed;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(184,255,74,.35),transparent);animation:scan 5s linear infinite;pointer-events:none;z-index:50}
+@keyframes scan{0%{top:52px;opacity:1}100%{top:calc(100vh - 60px);opacity:0}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.28em;color:var(--lime);margin-bottom:14px;font-weight:400}
+.slide-title{font-family:'Playfair Display',serif;font-size:clamp(26px,3.2vw,42px);font-weight:600;line-height:1.15;margin-bottom:26px}
+.slide-title em{color:var(--lime);font-style:italic}
+.slide-title span{color:var(--red)}
+.tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--w3);border:1px solid var(--b2);padding:4px 10px;background:var(--srf);display:inline-block}
+.tag.hi{color:var(--lime);border-color:rgba(184,255,74,.28);background:rgba(184,255,74,.05)}
+.inner{position:relative;z-index:1;width:100%;padding:0 24px}
+
+/* SLIDE 1 */
+.s1-inner{text-align:center;max-width:720px;padding:0 24px;position:relative;z-index:1}
+.s1-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.3em;color:var(--lime);margin-bottom:22px;opacity:0;animation:fadeUp .6s .2s forwards}
+.s1-title{font-family:'Playfair Display',serif;font-size:clamp(40px,5.5vw,68px);font-weight:700;line-height:1.07;color:var(--wh);margin-bottom:20px;opacity:0;animation:fadeUp .7s .35s forwards}
+.s1-title em{color:var(--lime);font-style:italic}
+.s1-sub{font-family:'Outfit',sans-serif;font-size:16px;line-height:1.7;color:var(--w2);max-width:540px;margin:0 auto 28px;font-weight:300;opacity:0;animation:fadeUp .6s .55s forwards}
+.s1-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp .6s .75s forwards}
+.s1-stats{display:flex;border:1px solid var(--b1);background:var(--srf);max-width:420px;margin:30px auto 0;opacity:0;animation:fadeUp .6s .95s forwards}
+.s1-stat{flex:1;padding:16px 18px;text-align:center}
+.s1-stat+.s1-stat{border-left:1px solid var(--b1)}
+.s1-stat-n{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--lime);line-height:1}
+.s1-stat-l{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--w3);letter-spacing:.14em;margin-top:5px}
+
+/* GRIDS */
+.prob-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.role-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:20px}
+.action-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:22px}
+.co-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;margin-top:20px}
+
+/* CARDS */
+.prob-card{background:var(--srf);border:1px solid var(--b1);padding:22px 20px;position:relative;overflow:hidden;opacity:0}
+.prob-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px}
+.prob-card.red::before{background:var(--red)}.prob-card.amb::before{background:var(--amber)}.prob-card.tel::before{background:var(--teal)}
+.prob-lbl{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.18em;margin-bottom:12px}
+.prob-lbl.red{color:var(--red)}.prob-lbl.amb{color:var(--amber)}.prob-lbl.tel{color:var(--teal)}
+.prob-ttl{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;margin-bottom:9px}
+.prob-bdy{font-size:12.5px;line-height:1.65;color:var(--w2);font-weight:300}
+
+.role-card{background:var(--srf);border:1px solid var(--b1);padding:22px 20px;transition:border-color .2s,background .2s;position:relative;opacity:0}
+.role-card:hover{border-color:rgba(184,255,74,.4);background:var(--pnl)}
+.role-badge{position:absolute;top:14px;right:14px;font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.14em;padding:3px 8px;background:rgba(184,255,74,.08);border:1px solid rgba(184,255,74,.22);color:var(--lime)}
+.role-icon{font-size:26px;margin-bottom:12px}
+.role-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin-bottom:5px}
+.role-types{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--lime);letter-spacing:.1em;margin-bottom:9px}
+.role-desc{font-size:12px;line-height:1.65;color:var(--w2);font-weight:300}
+
+.flow-row{display:grid;grid-template-columns:1fr 30px 1fr 30px 1fr;align-items:start;margin-top:22px}
+.flow-step{background:var(--srf);border:1px solid var(--b1);padding:18px;opacity:0}
+.flow-arrow{display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--w3);padding-top:20px}
+.flow-num{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.22em;color:var(--lime);margin-bottom:9px}
+.flow-ttl{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;margin-bottom:7px}
+.flow-bdy{font-size:11.5px;line-height:1.65;color:var(--w2);font-weight:300}
+.csv-cols{display:flex;flex-wrap:wrap;gap:4px;margin-top:10px}
+.csv-col{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:var(--w3);border:1px solid var(--b1);padding:2px 5px;background:var(--ink2)}
+.csv-col.key{color:var(--lime);border-color:rgba(184,255,74,.22)}
+.flow-tag{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;padding:3px 8px;border:1px solid rgba(184,255,74,.28);color:var(--lime);margin-top:10px}
+
+.feat-card{background:var(--srf);border:1px solid var(--b1);padding:17px 18px;display:flex;gap:13px;align-items:flex-start;opacity:0}
+.feat-ic{font-size:18px;flex-shrink:0;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:var(--crd)}
+.feat-ttl{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;margin-bottom:5px}
+.feat-card p{font-size:11.5px;line-height:1.65;color:var(--w2);font-weight:300}
+.feat-pill{display:inline-block;margin-top:7px;font-family:'JetBrains Mono',monospace;font-size:7.5px;letter-spacing:.1em;padding:2px 7px;background:rgba(184,255,74,.07);border:1px solid rgba(184,255,74,.2);color:var(--lime)}
+
+.action-card{background:var(--srf);border:1px solid var(--b1);padding:18px;opacity:0}
+.action-card.acc{border-color:rgba(184,255,74,.28);background:rgba(184,255,74,.04)}
+.ac-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;margin-bottom:10px}
+.ac-list{list-style:none}
+.ac-list li{font-size:11.5px;line-height:1.55;color:var(--w2);font-weight:300;padding:5px 0;border-bottom:1px solid var(--b1);display:flex;gap:8px}
+.ac-list li:last-child{border-bottom:none}
+.ac-list li .n{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--lime);flex-shrink:0;margin-top:1px}
+.ac-list li strong{color:var(--wh);font-weight:500}
+
+.co-card{background:var(--srf);border:1px solid var(--b1);padding:17px 18px;opacity:0}
+.co-card.acc{border-color:rgba(184,255,74,.28);background:rgba(184,255,74,.04)}
+.co-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;margin-bottom:9px}
+.co-card p{font-size:11.5px;line-height:1.65;color:var(--w2);font-weight:300;margin-bottom:5px}
+.co-steps{list-style:none}
+.co-steps li{font-size:11px;line-height:1.5;color:var(--w2);font-weight:300;padding:5px 0;border-bottom:1px solid var(--b1);display:flex;gap:8px}
+.co-steps li:last-child{border-bottom:none}
+.co-steps li .n{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:var(--lime);flex-shrink:0;white-space:nowrap}
+.exp-row{display:flex;gap:7px;margin-top:10px;flex-wrap:wrap}
+.exp-item{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.08em;color:var(--w2);border:1px solid var(--b2);padding:6px 8px;background:var(--crd);flex:1;min-width:100px;text-align:center}
+
+/* THRESHOLDS */
+.thresh-table{width:100%;border-collapse:collapse;margin-top:20px}
+.thresh-table th{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.18em;color:var(--w3);padding:7px 12px;text-align:left;border-bottom:1px solid var(--b1)}
+.thresh-table td{padding:9px 12px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:300;border-bottom:1px solid var(--b1);color:var(--w2)}
+.thresh-table td:first-child{font-family:'Playfair Display',serif;font-size:12.5px;font-weight:500;color:var(--wh)}
+.thresh-table td:nth-child(3){font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--wh)}
+.thresh-table tr:last-child td{border-bottom:none}
+.thresh-table tr:hover td{background:var(--pnl)}
+.bs{font-size:9px;font-family:'JetBrains Mono',monospace;letter-spacing:.1em}
+.bs.safe{color:var(--green)}.bs.warn{color:var(--amber)}.bs.crit{color:var(--red)}.bs.dead{color:var(--red);font-weight:500}
+.thresh-note{margin-top:14px;padding:12px 15px;background:rgba(255,74,74,.05);border:1px solid rgba(255,74,74,.18);border-left:3px solid var(--red);font-size:12px;line-height:1.65;color:var(--w2);font-weight:300}
+.thresh-note strong{color:var(--wh);font-weight:500}
+
+/* CTA */
+.s9-inner{text-align:center;max-width:640px;padding:0 24px;position:relative;z-index:1}
+.s9-title{font-family:'Playfair Display',serif;font-size:clamp(34px,4.5vw,56px);font-weight:700;line-height:1.1;margin-bottom:18px;opacity:0;animation:fadeUp .6s .3s forwards}
+.s9-title em{color:var(--lime);font-style:italic}
+.s9-sub{font-size:15px;line-height:1.7;color:var(--w2);margin-bottom:30px;font-weight:300;opacity:0;animation:fadeUp .6s .5s forwards}
+.s9-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;opacity:0;animation:fadeUp .6s .7s forwards}
+.btn-primary{background:var(--lime);color:#000;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;letter-spacing:.08em;padding:12px 26px;text-decoration:none;display:inline-block;transition:background .15s,transform .1s}
+.btn-primary:hover{background:var(--lime2);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--wh);font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;padding:12px 22px;border:1px solid var(--b2);text-decoration:none;display:inline-block;transition:border-color .15s}
+.btn-ghost:hover{border-color:var(--w2)}
+.s9-checks{display:flex;flex-direction:column;gap:7px;margin-top:26px;text-align:left;max-width:400px;margin-left:auto;margin-right:auto;opacity:0;animation:fadeUp .6s .9s forwards}
+.s9-check{display:flex;gap:9px;align-items:flex-start;font-size:12.5px;line-height:1.5;color:var(--w2);font-weight:300}
+.s9-check::before{content:"✓";color:var(--lime);font-family:'JetBrains Mono',monospace;font-size:10px;flex-shrink:0;margin-top:2px}
+
+/* STAGGERED ANIMATIONS */
+.slide.active .prob-card{animation:fadeUp .5s both}
+.slide.active .prob-card:nth-child(1){animation-delay:.1s}.slide.active .prob-card:nth-child(2){animation-delay:.22s}.slide.active .prob-card:nth-child(3){animation-delay:.34s}
+.slide.active .role-card{animation:fadeUp .5s both}
+.slide.active .role-card:nth-child(1){animation-delay:.1s}.slide.active .role-card:nth-child(2){animation-delay:.22s}.slide.active .role-card:nth-child(3){animation-delay:.34s}
+.slide.active .flow-step{animation:fadeUp .5s both}
+.slide.active .flow-step:nth-of-type(1){animation-delay:.1s}.slide.active .flow-step:nth-of-type(2){animation-delay:.28s}.slide.active .flow-step:nth-of-type(3){animation-delay:.46s}
+.slide.active .feat-card{animation:fadeUp .5s both}
+.slide.active .feat-card:nth-child(1){animation-delay:.08s}.slide.active .feat-card:nth-child(2){animation-delay:.18s}.slide.active .feat-card:nth-child(3){animation-delay:.28s}.slide.active .feat-card:nth-child(4){animation-delay:.38s}
+.slide.active .action-card{animation:fadeUp .5s both}
+.slide.active .action-card:nth-child(1){animation-delay:.08s}.slide.active .action-card:nth-child(2){animation-delay:.18s}.slide.active .action-card:nth-child(3){animation-delay:.28s}.slide.active .action-card:nth-child(4){animation-delay:.38s}
+.slide.active .co-card{animation:fadeUp .5s both}
+.slide.active .co-card:nth-child(1){animation-delay:.08s}.slide.active .co-card:nth-child(2){animation-delay:.18s}.slide.active .co-card:nth-child(3){animation-delay:.28s}.slide.active .co-card:nth-child(4){animation-delay:.38s}
+.slide.active .eyebrow{animation:fadeUp .5s .05s both}
+.slide.active .slide-title{animation:fadeUp .5s .15s both}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="scan-line"></div>
+<div id="progress-wrap"><div id="progress-bar"></div></div>
+
+<nav id="nav">
+  <div class="nav-brand">Recon<em>IQ</em><div class="nav-dot"></div><span class="nav-label">PRODUCT TOUR</span></div>
+  <div class="nav-right">
+    <span class="slide-counter" id="slide-counter">01 / 09</span>
+    <a href="https://ricosaas.github.io/reconiq/" target="_blank" class="nav-cta">OPEN LIVE DEMO →</a>
+  </div>
+</nav>
+
+<!-- S1: HERO -->
+<div class="slide active" id="s1">
+  <div class="s1-inner">
+    <div class="s1-eyebrow">SETTLEMENT INTELLIGENCE PLATFORM</div>
+    <h1 class="s1-title">Stop losing money<br>to <em>silent errors</em></h1>
+    <p class="s1-sub">ReconIQ compares acquirer statements against bank deposits, monitors chargeback ratios against Visa and Mastercard thresholds, and tracks every reserve tranche with its exact release date. When something goes red — it tells you the numbered steps to fix it.</p>
+    <div class="s1-tags">
+      <span class="tag hi">HIGH-RISK MERCHANTS</span>
+      <span class="tag hi">PSPs &amp; EMIs</span>
+      <span class="tag hi">ACQUIRING BANKS</span>
+      <span class="tag">COMPLIANCE TEAMS</span>
+      <span class="tag">ISOs &amp; BaaS</span>
+    </div>
+    <div class="s1-stats">
+      <div class="s1-stat"><div class="s1-stat-n">3</div><div class="s1-stat-l">CORE PROBLEMS SOLVED</div></div>
+      <div class="s1-stat"><div class="s1-stat-n">3</div><div class="s1-stat-l">USER ROLES SUPPORTED</div></div>
+      <div class="s1-stat"><div class="s1-stat-n">3</div><div class="s1-stat-l">AUDIT EXPORT TYPES</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- S2: PROBLEM -->
+<div class="slide" id="s2">
+  <div class="inner" style="max-width:860px">
+    <div class="eyebrow">THE PROBLEM</div>
+    <h2 class="slide-title">Three ways you're losing money <span>right now</span></h2>
+    <div class="prob-grid">
+      <div class="prob-card red">
+        <div class="prob-lbl red">SETTLEMENT ERRORS</div>
+        <div class="prob-ttl">Your acquirer is making mistakes</div>
+        <div class="prob-bdy">Acquirers make calculation mistakes on fees, refunds, and chargebacks. Without reconciliation you never catch them — and they never volunteer to give the money back.</div>
+      </div>
+      <div class="prob-card amb">
+        <div class="prob-lbl amb">CHARGEBACK CREEP</div>
+        <div class="prob-ttl">Your ratio climbs before you notice</div>
+        <div class="prob-bdy">Your ratio climbs past Visa's 0.65% threshold before you realise. By then you're in a monitoring programme. A few weeks more and your processing account gets terminated.</div>
+      </div>
+      <div class="prob-card tel">
+        <div class="prob-lbl tel">RESERVE BLACK BOX</div>
+        <div class="prob-ttl">Your cash is locked with no visibility</div>
+        <div class="prob-bdy">Thousands locked by your acquirer with no visibility on when it releases. Late releases go unnoticed. Money sits idle because nobody is tracking the release dates.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S3: WHO -->
+<div class="slide" id="s3">
+  <div class="inner" style="max-width:860px">
+    <div class="eyebrow">WHO IT'S BUILT FOR</div>
+    <h2 class="slide-title">One platform. <em>Three roles.</em></h2>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="role-badge">MERCHANT</div>
+        <div class="role-icon">🏪</div>
+        <div class="role-name">Merchant</div>
+        <div class="role-types">ECOMMERCE · GAMING · CRYPTO · TRAVEL · SAAS</div>
+        <div class="role-desc">Reconcile your own settlements, monitor your chargeback ratio against Visa and Mastercard thresholds in real time, and see the exact date every reserve tranche will be released back to you.</div>
+      </div>
+      <div class="role-card">
+        <div class="role-badge">INSTITUTION</div>
+        <div class="role-icon">🏦</div>
+        <div class="role-name">Financial Institution</div>
+        <div class="role-types">PSP · ACQUIRER · EMI · ISO · BaaS</div>
+        <div class="role-desc">Portfolio view across all your merchants. Chargeback exposure, reserve positions, and reconciliation health per MID. Escalation steps mapped to each card scheme threshold breach.</div>
+      </div>
+      <div class="role-card">
+        <div class="role-badge">COMPLIANCE</div>
+        <div class="role-icon">🔍</div>
+        <div class="role-name">Compliance Officer</div>
+        <div class="role-types">MLRO · CRO · CFO · AUDIT</div>
+        <div class="role-desc">Read-only. Every flag, breach, and anomaly surfaced for review and sign-off. Chargeback audit log, reserve audit trail, and one-click export for FCA or MFSA regulatory inspection.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S4: DATA IN -->
+<div class="slide" id="s4">
+  <div class="inner" style="max-width:860px">
+    <div class="eyebrow">HOW YOUR DATA GETS IN</div>
+    <h2 class="slide-title">Your data already exists.<br><em>You just need somewhere to put it.</em></h2>
+    <div class="flow-row">
+      <div class="flow-step">
+        <div class="flow-num">STEP 01</div>
+        <div class="flow-ttl">Export from your acquirer</div>
+        <div class="flow-bdy">Every PSP, acquirer, and payment gateway exports settlement data as CSV — it's standard. You're already producing this file every month. It just hasn't had anywhere useful to go until now.</div>
+        <span class="flow-tag">CSV EXPORT</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 02</div>
+        <div class="flow-ttl">Upload CSV or enter manually</div>
+        <div class="flow-bdy">Drop the file into ReconIQ's upload panel. Or use the manual entry form for individual statements. ReconIQ provides a downloadable CSV template with the exact column format required.</div>
+        <div class="csv-cols">
+          <span class="csv-col key">MID</span><span class="csv-col key">Gross_Amount</span><span class="csv-col key">Bank_Received</span><span class="csv-col">Fee_Amount</span><span class="csv-col">Chargeback_Amount</span><span class="csv-col">Reserve_Held</span><span class="csv-col">Reserve_Days</span>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">
+        <div class="flow-num">STEP 03</div>
+        <div class="flow-ttl">All dashboards update instantly</div>
+        <div class="flow-bdy">Reconciliation status, chargeback ratios, reserve release schedule, portfolio cards, compliance log — everything updates from your data. No configuration required. Works on upload.</div>
+        <span class="flow-tag">INSTANT</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S5: WHAT IT DOES -->
+<div class="slide" id="s5">
+  <div class="inner" style="max-width:880px">
+    <div class="eyebrow">WHAT RECONIQ DOES</div>
+    <h2 class="slide-title">Four things done <em>automatically</em></h2>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-ic">⚖️</div>
+        <div>
+          <div class="feat-ttl">Settlement Reconciliation</div>
+          <p>Compares Net Expected against what actually arrived in your bank. Every discrepancy is flagged with its value and status. A red Discrepancy badge means money is either missing or unexplained.</p>
+          <span class="feat-pill">NET EXPECTED vs BANK RECEIVED</span>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ic">📊</div>
+        <div>
+          <div class="feat-ttl">Chargeback Ratio Monitoring</div>
+          <p>Calculates your CB ratio and maps it against Visa VAMP (0.65%), ECM (0.90%), HCM (1.80%) and Mastercard MCM (1.00%) thresholds. Your status updates the moment you enter data.</p>
+          <span class="feat-pill">VISA + MASTERCARD THRESHOLDS</span>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ic">📅</div>
+        <div>
+          <div class="feat-ttl">Reserve Release Schedule</div>
+          <p>Calculates the exact calendar date each reserve tranche should be released, based on your statement date and contractual hold period. Every tranche is listed with days until release.</p>
+          <span class="feat-pill">EXACT RELEASE DATES PER TRANCHE</span>
+        </div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ic">🏦</div>
+        <div>
+          <div class="feat-ttl">Portfolio View for Institutions</div>
+          <p>Institutions see total portfolio volume, at-risk merchants, reserves held, and open discrepancies across all MIDs. A chargeback table shows each merchant's ratio with your escalation steps as the sponsoring entity.</p>
+          <span class="feat-pill">INSTITUTION MODE</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S6: AFTER THE DATA -->
+<div class="slide" id="s6">
+  <div class="inner" style="max-width:880px">
+    <div class="eyebrow">ONCE YOU SEE THE DATA</div>
+    <h2 class="slide-title">Not just a red flag.<br><em>A numbered playbook.</em></h2>
+    <div class="action-grid">
+      <div class="action-card acc">
+        <div class="ac-title">📋 For every chargeback flag</div>
+        <ul class="ac-list">
+          <li><span class="n">1</span><span>Ask your acquirer for a <strong>reason code breakdown</strong> — most disputes fall into a handful of codes, each with a specific fix.</span></li>
+          <li><span class="n">2</span><span><strong>Fix your transaction descriptor.</strong> "Transaction not recognised" is usually caused by a confusing merchant name on the bank statement.</span></li>
+          <li><span class="n">3</span><span><strong>Make your refund policy visible and fast.</strong> Customers who can't get a refund easily escalate to a chargeback.</span></li>
+          <li><span class="n">4</span><span><strong>Contact your acquirer proactively</strong> — before they contact you. Self-reporting shows good faith.</span></li>
+          <li><span class="n">5</span><span><strong>Document your remediation plan in writing.</strong> Card schemes favour merchants who show a structured response.</span></li>
+        </ul>
+      </div>
+      <div class="action-card">
+        <div class="ac-title">🔒 For every late reserve release</div>
+        <ul class="ac-list">
+          <li><span class="n">1</span><span><strong>Wait 5 business days</strong> after the expected date — acquirers often process releases in batch cycles.</span></li>
+          <li><span class="n">2</span><span>Email your acquirer's <strong>settlements ops team</strong> — not your account manager. Reference the statement date, amount, and calculated release date.</span></li>
+          <li><span class="n">3</span><span>No response in 5 days: <strong>escalate in writing</strong>, copy compliance or legal. State the hold period has elapsed per contract terms.</span></li>
+          <li><span class="n">4</span><span><strong>Check your merchant agreement.</strong> Holding beyond the contractual period without justification is a breach of contract.</span></li>
+        </ul>
+      </div>
+      <div class="action-card">
+        <div class="ac-title">🏦 For institutions — escalation ladder</div>
+        <ul class="ac-list">
+          <li><span class="n">①</span><span><strong>Send written warning</strong> to merchant (VAMP ≥ 0.65%)</span></li>
+          <li><span class="n">②</span><span><strong>Issue formal notice</strong> with 30-day improvement window (ECM ≥ 0.90%)</span></li>
+          <li><span class="n">③</span><span><strong>Increase reserve percentage</strong> applied to settlements (ECM+)</span></li>
+          <li><span class="n">④</span><span><strong>Suspend MID</strong> (HCM ≥ 1.80%)</span></li>
+          <li><span class="n">⑤</span><span><strong>MATCH list referral</strong> on persistent breach</span></li>
+        </ul>
+      </div>
+      <div class="action-card">
+        <div class="ac-title">⚠️ Red Alert Protocol</div>
+        <ul class="ac-list">
+          <li><span class="n">→</span><span>Screenshot flag with timestamp</span></li>
+          <li><span class="n">→</span><span>Notify MLRO within 2 hours</span></li>
+          <li><span class="n">→</span><span>Contact merchant or acquirer same day</span></li>
+          <li><span class="n">→</span><span>Document every action with timestamp</span></li>
+          <li><span class="n">→</span><span>Discrepancy &gt; £10,000 unresolved after 48h: begin SAR assessment procedure</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S7: COMPLIANCE -->
+<div class="slide" id="s7">
+  <div class="inner" style="max-width:860px">
+    <div class="eyebrow">COMPLIANCE OFFICER MODE</div>
+    <h2 class="slide-title">Inspection-ready.<br><em>No preparation required.</em></h2>
+    <div class="co-grid">
+      <div class="co-card acc">
+        <div class="co-title">🔍 Read-Only Risk Dashboard</div>
+        <p>Every flag, threshold breach, and anomaly in one view. No data entry in this mode — records cannot be altered. Built for MLRO, CRO, CFO, and audit sign-off.</p>
+        <ul class="co-steps">
+          <li><span class="n">▸</span>Open Risk Flags — severity, MID, issue, recommended action, status</li>
+          <li><span class="n">▸</span>Chargeback Breach History — full audit log for evidencing monitoring controls to a regulator</li>
+          <li><span class="n">▸</span>Reserve Audit Trail — every tranche with contractual basis, expected release, and status</li>
+        </ul>
+      </div>
+      <div class="co-card">
+        <div class="co-title">📅 Operating Routine</div>
+        <ul class="co-steps">
+          <li><span class="n">DAILY</span>Open Risk Summary. Critical flags require same-day escalation to senior management. Screenshot with timestamp.</li>
+          <li><span class="n">WEEKLY</span>Review CB Audit Log. Confirm remediation in progress for every open flag. Download Weekly Risk Summary.</li>
+          <li><span class="n">MONTHLY</span>Verify reserve tranches have contractual basis. Sign off monthly reserve position.</li>
+          <li><span class="n">QUARTERLY</span>Generate Full Audit Export for regulatory records.</li>
+        </ul>
+      </div>
+      <div class="co-card">
+        <div class="co-title">📁 One-Click Report Exports</div>
+        <p>Three reports generated from your live data — no manual formatting:</p>
+        <div class="exp-row">
+          <div class="exp-item">📋 Daily Settlement Report</div>
+          <div class="exp-item">📊 Weekly Risk Summary</div>
+          <div class="exp-item">📁 Full Audit Export</div>
+        </div>
+        <p style="margin-top:9px">The Full Audit Export is your first-response document when a regulator requests evidence of settlement monitoring controls.</p>
+      </div>
+      <div class="co-card">
+        <div class="co-title">🏛️ Regulatory Alignment</div>
+        <p>Audit trail format and terminology built around what FCA and MFSA examiners expect to see. Structured around Visa and Mastercard monitoring programme requirements.</p>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+          <span class="tag" style="font-size:8px">FCA</span>
+          <span class="tag" style="font-size:8px">MFSA</span>
+          <span class="tag" style="font-size:8px">VISA VAMP / ECM / HCM</span>
+          <span class="tag" style="font-size:8px">MC MCM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- S8: THRESHOLDS -->
+<div class="slide" id="s8">
+  <div class="inner" style="max-width:800px">
+    <div class="eyebrow">CHARGEBACK THRESHOLD REFERENCE</div>
+    <h2 class="slide-title">The numbers that determine<br>whether you keep <em>processing</em></h2>
+    <table class="thresh-table">
+      <thead><tr><th>PROGRAMME</th><th>SCHEME</th><th>TRIGGER</th><th>CONSEQUENCE</th><th>STATUS</th></tr></thead>
+      <tbody>
+        <tr><td>Safe Zone</td><td>Visa / MC</td><td>&lt; 0.65%</td><td>Compliant. No scheme monitoring. Review CB process monthly.</td><td><span class="bs safe">● SAFE</span></td></tr>
+        <tr><td>VAMP</td><td>Visa</td><td>≥ 0.65%</td><td>Monitoring entry. Acquirer notified. Formal letter. 30 days to show improvement.</td><td><span class="bs warn">● VAMP</span></td></tr>
+        <tr><td>ECM</td><td>Visa</td><td>≥ 0.90%</td><td>Monthly fines begin. Documented remediation plan required. Institution liability activates.</td><td><span class="bs warn">● FINES</span></td></tr>
+        <tr><td>HCM</td><td>Visa</td><td>≥ 1.80%</td><td>Acquirer under pressure to suspend MID. MATCH list risk.</td><td><span class="bs crit">● CRITICAL</span></td></tr>
+        <tr><td>MCM</td><td>Mastercard</td><td>≥ 1.00%</td><td>Monitoring programme entry.</td><td><span class="bs warn">● MCM</span></td></tr>
+        <tr><td>Excessive CB</td><td>Mastercard</td><td>≥ 1.50%</td><td>Fines begin. Possible MATCH listing — processing becomes near-impossible.</td><td><span class="bs dead">● MATCH RISK</span></td></tr>
+      </tbody>
+    </table>
+    <div class="thresh-note"><strong>For Financial Institutions:</strong> You carry the card scheme liability for your merchants' CB ratios. If a merchant you sponsor exceeds Visa ECM (≥ 0.90%), <strong>Visa may fine you — not just the merchant.</strong> ReconIQ flags the breach immediately and maps your required escalation steps.</div>
+  </div>
+</div>
+
+<!-- S9: CTA -->
+<div class="slide" id="s9">
+  <div class="s9-inner">
+    <h2 class="s9-title">See it with<br><em>real data</em></h2>
+    <p class="s9-sub">ReconIQ is live right now. Five realistic demo merchants are preloaded so you can explore every feature immediately — or upload your own CSV and see your actual settlement health straight away.</p>
+    <div class="s9-btns">
+      <a href="https://ricosaas.github.io/reconiq/" target="_blank" class="btn-primary">OPEN RECONIQ →</a>
+      <a href="https://ricosaas.github.io/reconiq/" target="_blank" class="btn-ghost">EXPLORE DEMO DATA</a>
+    </div>
+    <div class="s9-checks">
+      <div class="s9-check">No setup. No account required. Works immediately.</div>
+      <div class="s9-check">Upload your own CSV or use five preloaded demo merchants.</div>
+      <div class="s9-check">Switch between Merchant, Financial Institution, and Compliance Officer modes.</div>
+      <div class="s9-check">Chargeback monitoring, reserve scheduling, and reconciliation in one place.</div>
+      <div class="s9-check">One-click audit export ready for FCA and MFSA regulatory inspection.</div>
+    </div>
+  </div>
+</div>
+
+<div id="controls">
+  <button class="ctrl-btn" onclick="prevSlide()">← PREV</button>
+  <div class="pip-wrap" id="pips"></div>
+  <button class="ctrl-btn pause-btn" id="pause-btn" onclick="togglePause()">⏸ PAUSE</button>
+  <button class="ctrl-btn" onclick="nextSlide()">NEXT →</button>
+</div>
+
+<script>
+const SLIDES=document.querySelectorAll('.slide');
+const DUR=[7000,8000,7000,9000,9000,10000,9000,8000,12000];
+const N=SLIDES.length;
+let cur=0,paused=false,timer=null,startTime=null,elapsed=0;
+const pipsWrap=document.getElementById('pips');
+for(let i=0;i<N;i++){const p=document.createElement('div');p.className='pip'+(i===0?' active':'');p.innerHTML='<div class="pip-fill"></div>';p.onclick=()=>goTo(i);pipsWrap.appendChild(p)}
+function getPips(){return document.querySelectorAll('.pip')}
+function goTo(idx){
+  clearTimeout(timer);const pips=getPips();
+  SLIDES[cur].classList.remove('active');pips[cur].classList.remove('active');pips[cur].classList.add('done');pips[cur].querySelector('.pip-fill').style.transform='scaleX(1)';
+  for(let i=idx;i<N;i++){pips[i].classList.remove('done','active');pips[i].querySelector('.pip-fill').style.transform='scaleX(0)'}
+  cur=idx;SLIDES[cur].classList.add('active');pips[cur].classList.add('active');
+  document.getElementById('slide-counter').textContent=String(cur+1).padStart(2,'0')+' / '+String(N).padStart(2,'0');
+  elapsed=0;if(!paused)startTimer();
+}
+function startTimer(){
+  clearTimeout(timer);startTime=performance.now();const dur=DUR[cur];
+  const fill=getPips()[cur].querySelector('.pip-fill');
+  fill.style.transition='none';fill.style.transform='scaleX('+(elapsed/dur)+')';
+  requestAnimationFrame(()=>{fill.style.transition='transform '+((dur-elapsed)/1000)+'s linear';fill.style.transform='scaleX(1)'});
+  animBar(dur-elapsed);
+  timer=setTimeout(()=>{if(cur<N-1)goTo(cur+1);else{getPips().forEach(p=>{p.classList.remove('active','done');p.querySelector('.pip-fill').style.transform='scaleX(0)'});goTo(0)}},dur-elapsed);
+}
+function animBar(rem){
+  const bar=document.getElementById('progress-bar');
+  const tEl=DUR.slice(0,cur).reduce((a,b)=>a+b,0)+elapsed;
+  const tot=DUR.reduce((a,b)=>a+b,0);
+  const s=(tEl/tot)*100,e=(DUR.slice(0,cur+1).reduce((a,b)=>a+b,0)/tot)*100;
+  bar.style.transition='none';bar.style.width=s+'%';
+  requestAnimationFrame(()=>{bar.style.transition='width '+(rem/1000)+'s linear';bar.style.width=e+'%'});
+}
+function togglePause(){
+  const btn=document.getElementById('pause-btn');
+  if(paused){paused=false;btn.textContent='⏸ PAUSE';startTimer()}
+  else{
+    paused=true;elapsed+=performance.now()-startTime;clearTimeout(timer);
+    const fill=getPips()[cur].querySelector('.pip-fill');fill.style.transition='none';fill.style.transform=getComputedStyle(fill).transform;
+    const bar=document.getElementById('progress-bar');bar.style.transition='none';bar.style.width=getComputedStyle(bar).width;
+    btn.textContent='▶ PLAY';
+  }
+}
+function nextSlide(){goTo(cur<N-1?cur+1:0)}
+function prevSlide(){goTo(cur>0?cur-1:0)}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();nextSlide()}if(e.key==='ArrowLeft')prevSlide();if(e.key==='p'||e.key==='P')togglePause()});
+goTo(0);
+</script>
+</body>
+</html>
